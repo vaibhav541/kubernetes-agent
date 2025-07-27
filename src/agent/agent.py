@@ -66,6 +66,7 @@ if not anthropic_api_key:
 # Constants
 MAX_RESTARTS_PER_DAY = int(os.environ.get("MAX_RESTARTS_PER_DAY", "10"))
 ANALYSIS_THRESHOLD = int(os.environ.get("ANALYSIS_THRESHOLD", "4"))
+GITHUB_BASE_BRANCH = os.environ.get("GITHUB_BASE_BRANCH", "main")
 # ANALYSIS_THRESHOLD = 1
 CPU_THRESHOLD = 10  # CPU usage percentage threshold (lowered to 10% for testing)
 MEMORY_THRESHOLD = 600000000  # Memory threshold in bytes (500 MB)
@@ -104,7 +105,7 @@ class AgentState(TypedDict):
 # )
 
 # Claude setup
-llm = ChatAnthropic(model="claude-3-sonnet-20240229", temperature=0)
+llm = ChatAnthropic(model="claude-3-5-sonnet-20241022", temperature=0, anthropic_api_key=anthropic_api_key)
 
 # Node functions
 def monitor_metrics(state: AgentState) -> AgentState:
@@ -818,7 +819,7 @@ spec:
         try:
             branch_result = mcp_manager.use_tool("github", "create_branch", {
                 "branch": branch_name,
-                "base": "develop"  # Use develop as the base branch
+                "base": "main"  # Use main as the base branch
             })
             smith_logger.info(f"Smith created branch: {json.dumps(branch_result)}")
             
@@ -859,7 +860,7 @@ Closes #{github_issue.get("number", 0)}
             "title": pr_title,
             "body": pr_body,
             "head": branch_name,
-            "base": "develop"  # Use develop as the base branch
+            "base": GITHUB_BASE_BRANCH  # Use environment variable for base branch
         })
         logger.info(f"Pull request created: {json.dumps(pr_result)}")
         

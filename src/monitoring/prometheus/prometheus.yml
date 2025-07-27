@@ -13,14 +13,15 @@ scrape_configs:
     metrics_path: /metrics
     scrape_interval: 5s
 
-  - job_name: 'kubernetes'
-    kubernetes_sd_configs:
-      - role: node
-    relabel_configs:
-      - source_labels: [__address__]
-        regex: '(.*):10250'
-        replacement: '${1}:9100'
-        target_label: __address__
-        action: replace
-      - action: labelmap
-        regex: __meta_kubernetes_node_label_(.+)
+  # Kubernetes service discovery disabled for Docker Compose environment
+  # - job_name: 'kubernetes'
+  #   kubernetes_sd_configs:
+  #     - role: node
+  #   relabel_configs:
+  #     - source_labels: [__address__]
+  #       regex: '(.*):10250'
+  #       replacement: '${1}:9100'
+  #       target_label: __address__
+  #       action: replace
+  #     - action: labelmap
+  #       regex: __meta_kubernetes_node_label_(.+)

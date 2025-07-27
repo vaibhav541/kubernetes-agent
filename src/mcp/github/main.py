@@ -18,6 +18,7 @@ app = FastAPI(title="GitHub MCP Server", description="MCP server for GitHub oper
 github_token = os.environ.get("GITHUB_TOKEN")
 github_owner = os.environ.get("GITHUB_OWNER")
 github_repo = os.environ.get("GITHUB_REPO")
+github_base_branch = os.environ.get("GITHUB_BASE_BRANCH", "main")
 
 if not github_token:
     print("WARNING: GITHUB_TOKEN environment variable not set")
@@ -84,7 +85,7 @@ class CreatePullRequestInput(MCPToolInput):
     title: str = Field(..., description="Pull request title")
     body: str = Field(..., description="Pull request body")
     head: str = Field(..., description="Head branch")
-    base: str = Field("develop", description="Base branch")
+    base: str = Field(github_base_branch, description="Base branch")
     draft: Optional[bool] = Field(False, description="Create as draft PR")
 
 class PullRequestOutput(MCPToolOutput):
@@ -117,7 +118,7 @@ class CreateBranchInput(MCPToolInput):
     owner: Optional[str] = Field(None, description="GitHub repository owner")
     repo: Optional[str] = Field(None, description="GitHub repository name")
     branch: str = Field(..., description="New branch name")
-    base: Optional[str] = Field("develop", description="Base branch name")
+    base: Optional[str] = Field(github_base_branch, description="Base branch name")
 
 class BranchOutput(MCPToolOutput):
     name: str
